@@ -1,0 +1,342 @@
+﻿<Window x:Class="TcpConnectionsViewer.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="TCP Connections Viewer" Height="550" Width="900" WindowState="Maximized" xmlns:local="clr-namespace:TcpConnectionsViewer" xmlns:converters="clr-namespace:TcpConnectionsViewer.Converters" xmlns:viewmodels="clr-namespace:TcpConnectionsViewer.ViewModels" xmlns:helpers="clr-namespace:TcpConnectionsViewer.Helpers" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:sockets="clr-namespace:System.Net.Sockets;assembly=System" Closing="Window_Closing" Loaded="Window_Loaded">
+    <Window.Resources>
+        <Style x:Key="styleMenu" TargetType="Menu">
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <Style x:Key="styleMainDataGrid" TargetType="DataGrid">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="RowHeaderWidth" Value="0" />
+            <Setter Property="HorizontalGridLinesBrush" Value="LightGray" />
+            <Setter Property="VerticalGridLinesBrush" Value="LightGray" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.DataContext>
+            <viewmodels:MainViewModel />
+        </Grid.DataContext>
+
+        <Grid.Resources>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" FalseValue="Hidden" TrueValue="Visible" />
+            <converters:IntIsGreaterThanToBoolConverter x:Key="IntIsGreaterThanToBoolConverter" />
+            <converters:FullFilePathToParentDirectoryConverter x:Key="FullFilePathToParentDirectoryConverter" />
+            <converters:ObjectIsNotNullToBoolConverter x:Key="ObjectIsNotNullToBoolConverter" />
+            <converters:TcpStateEqualsEstablishedToBoolConverter x:Key="TcpStateEqualsEstablishedToBoolConverter" />
+            <converters:StringIsNotNullOrWhiteSpaceToBoolConverter x:Key="StringIsNotNullOrWhiteSpaceToBoolConverter" />
+            <converters:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Menu Style="{StaticResource styleMenu}" Grid.Row="0" Grid.Column="0">
+            <MenuItem Header="_File">
+                <MenuItem Header="E_xit" Click="Exit_Click" />
+            </MenuItem>
+
+            <MenuItem Header="_View">
+                <MenuItem Header="Display _All Columns" Command="{Binding Path=DisplayAllColumnsCommand}" />
+                <MenuItem Header="Display _Default Columns" Command="{Binding Path=DisplayDefaultColumnsCommand}" />
+            </MenuItem>
+
+            <MenuItem Header="_Help">
+                <MenuItem Header="Visit Project _Homepage" Command="{Binding Path=VisitProjectHomepageCommand}" />
+                <MenuItem Header="Check For _Updates" Click="CheckForUpdates_Click" />
+            </MenuItem>
+        </Menu>
+
+        <DataGrid Style="{StaticResource styleMainDataGrid}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TcpInfo, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="False" MouseLeftButtonDown="DataGrid_MouseLeftButtonDown">
+
+            <DataGrid.Resources>
+                <helpers:BindingProxy x:Key="bindingProxy" Data="{Binding}" />
+
+                <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="ContextMenu" Value="{DynamicResource DataGridColumnHeaderContextMenu}" />
+                </Style>
+
+                <ContextMenu x:Key="DataGridColumnHeaderContextMenu" DataContext="{StaticResource bindingProxy}">
+                    <MenuItem Header="Local Address" IsCheckable="true" IsChecked="{Binding Data.LocalAddressIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Local Hostname" IsCheckable="true" IsChecked="{Binding Data.LocalHostnameIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Local Port" IsCheckable="true" IsChecked="{Binding Data.LocalPortIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Local Port Common Name" IsCheckable="true" IsChecked="{Binding Data.LocalPortCommonNameIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Local Port Common Description" IsCheckable="true" IsChecked="{Binding Data.LocalPortCommonDescriptionIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <Separator />
+                    <MenuItem Header="State" IsCheckable="true" IsChecked="{Binding Data.StateIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <Separator />
+                    <MenuItem Header="Remote Address" IsCheckable="true" IsChecked="{Binding Data.RemoteAddressIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote MAC Address" IsCheckable="true" IsChecked="{Binding Data.RemoteMacAddressIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote MAC Address Manufacturer" IsCheckable="true" IsChecked="{Binding Data.RemoteMacAddressManufacturerIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Hostname" IsCheckable="true" IsChecked="{Binding Data.RemoteHostnameIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Port" IsCheckable="true" IsChecked="{Binding Data.RemotePortIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Port Common Name" IsCheckable="true" IsChecked="{Binding Data.RemotePortCommonNameIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Port Common Description" IsCheckable="true" IsChecked="{Binding Data.RemotePortCommonDescriptionIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <Separator />
+                    <MenuItem Header="Remote Country" IsCheckable="true" IsChecked="{Binding Data.RemoteCountryIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Isp" IsCheckable="true" IsChecked="{Binding Data.RemoteIspIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Dma Code" IsCheckable="true" IsChecked="{Binding Data.RemoteDmaCodeIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Timezone" IsCheckable="true" IsChecked="{Binding Data.RemoteTimezoneIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Area Code" IsCheckable="true" IsChecked="{Binding Data.RemoteAreaCodeIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Asn" IsCheckable="true" IsChecked="{Binding Data.RemoteAsnIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Continent Code" IsCheckable="true" IsChecked="{Binding Data.RemoteContinentCodeIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Longitude" IsCheckable="true" IsChecked="{Binding Data.RemoteLongitudeIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Latitude" IsCheckable="true" IsChecked="{Binding Data.RemoteLatitudeIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Country Code" IsCheckable="true" IsChecked="{Binding Data.RemoteCountryCodeIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Remote Country Code3" IsCheckable="true" IsChecked="{Binding Data.RemoteCountryCode3IsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <Separator />
+                    <MenuItem Header="Process Id" IsCheckable="true" IsChecked="{Binding Data.ProcessIdIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Process Caption" IsCheckable="true" IsChecked="{Binding Data.ProcessCaptionIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Process Owner" IsCheckable="true" IsChecked="{Binding Data.ProcessOwnerIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Process Creation Date" IsCheckable="true" IsChecked="{Binding Data.ProcessCreationDateIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Time Since Process Creation" IsCheckable="true" IsChecked="{Binding Data.TimeSinceProcessCreationIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Process Executable Path" IsCheckable="true" IsChecked="{Binding Data.ProcessExecutablePathIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuItem Header="Process Command Line" IsCheckable="true" IsChecked="{Binding Data.ProcessCommandLineIsDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                </ContextMenu>
+            </DataGrid.Resources>
+
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Local Address" Binding="{Binding LocalAddress,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.LocalAddressIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Local Hostname" Binding="{Binding LocalHostname,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.LocalHostnameIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Local Port" Binding="{Binding LocalPort,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.LocalPortIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Local Port Common Name" Binding="{Binding LocalPortCommonService.Name,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.LocalPortCommonNameIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Local Port Common Description" Binding="{Binding LocalPortCommonService.Description,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.LocalPortCommonDescriptionIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                <DataGridTextColumn Header="State" Binding="{Binding State,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.StateIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                <DataGridTextColumn Header="Remote Address" Binding="{Binding RemoteAddress, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.RemoteAddressIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote MAC Address" Binding="{Binding RemoteMacAddress,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteMacAddressIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote MAC Address Manufacturer" Binding="{Binding RemoteMacAddressManufacturer,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteMacAddressManufacturerIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Hostname" Binding="{Binding RemoteHostname,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteHostnameIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Port" Binding="{Binding RemotePort,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.RemotePortIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Port Common Name" Binding="{Binding RemotePortCommonService.Name,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemotePortCommonNameIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Port Common Description" Binding="{Binding RemotePortCommonService.Description,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemotePortCommonDescriptionIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                <DataGridTextColumn Header="Remote Country" Binding="{Binding RemoteGeo.Country,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteCountryIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Isp" Binding="{Binding RemoteGeo.Isp,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteIspIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Dma Code" Binding="{Binding RemoteGeo.Dma_Code,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteDmaCodeIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Timezone" Binding="{Binding RemoteGeo.Timezone,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteTimezoneIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Area Code" Binding="{Binding RemoteGeo.Area_Code,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteAreaCodeIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Asn" Binding="{Binding RemoteGeo.Asn,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteAsnIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Continent Code" Binding="{Binding RemoteGeo.Continent_Code,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteContinentCodeIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Longitude" Binding="{Binding RemoteGeo.Longitude,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteLongitudeIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Latitude" Binding="{Binding RemoteGeo.Latitude,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteLatitudeIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Country Code" Binding="{Binding RemoteGeo.Country_Code,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteCountryCodeIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Remote Country Code3" Binding="{Binding RemoteGeo.Country_Code3,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.RemoteCountryCode3IsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
+                <DataGridTextColumn Header="Process Id" Binding="{Binding ProcessId,UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Data.ProcessIdIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Process Caption" Binding="{Binding RunningProcess.Caption,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.ProcessCaptionIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Process Owner" Binding="{Binding RunningProcess.Owner,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.ProcessOwnerIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Process Creation Date" Binding="{Binding RunningProcess.CreationDate,UpdateSourceTrigger=PropertyChanged, TargetNullValue='-'}" Visibility="{Binding Data.ProcessCreationDateIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Time Since Process Creation" Binding="{Binding RunningProcess.TimeSinceCreation,UpdateSourceTrigger=PropertyChanged, TargetNullValue='-'}" Visibility="{Binding Data.TimeSinceProcessCreationIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Process Executable Path" Binding="{Binding RunningProcess.ExecutablePath,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.ProcessExecutablePathIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Process Command Line" Binding="{Binding RunningProcess.CommandLine,UpdateSourceTrigger=PropertyChanged,TargetNullValue='-'}" Visibility="{Binding Data.ProcessCommandLineIsDisplayed, Source={StaticResource bindingProxy}, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}" />
+            </DataGrid.Columns>
+
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="C_opy" Command="Copy" />
+                    <Separator />
+                    <MenuItem Header="_Select All" Command="SelectAll" />
+                    <Separator />
+                    <MenuItem Header="Scroll To _Top" Click="ScrollToTop_Click" />
+                    <MenuItem Header="Scroll To _Bottom" Click="ScrollToBottom_Click" />
+
+                    <Separator>
+                        <Separator.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.State" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource TcpStateEqualsEstablishedToBoolConverter}" />
+                            </MultiBinding>
+                        </Separator.Visibility>
+                    </Separator>
+                    <MenuItem Command="{Binding Path=TerminateAllConnectionsToSelectedItemRemoteAddressCommand}" IsEnabled="{Binding IsElevated}">
+                        <MenuItem.Header>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Terminate Established Connections To '{0}'">
+                                        <Binding Path="SelectedItem.RemoteAddress" TargetNullValue='' />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </MenuItem.Header>
+                        <MenuItem.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.State" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource TcpStateEqualsEstablishedToBoolConverter}" />
+                            </MultiBinding>
+                        </MenuItem.Visibility>
+                    </MenuItem>
+
+
+                    <Separator>
+                        <Separator.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RunningProcess" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RunningProcess.Id" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource IntIsGreaterThanToBoolConverter}" ConverterParameter="0" />
+                                <Binding Path="SelectedItem.RunningProcess.Caption" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </Separator.Visibility>
+                    </Separator>
+                    <MenuItem Command="{Binding Path=TerminateSelectedItemProcessCommand}">
+                        <MenuItem.Header>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Terminate '{0}' (Process ID {1})">
+                                        <Binding Path="SelectedItem.RunningProcess.Caption" />
+                                        <Binding Path="SelectedItem.RunningProcess.Id" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </MenuItem.Header>
+                        <MenuItem.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RunningProcess" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RunningProcess.Id" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource IntIsGreaterThanToBoolConverter}" ConverterParameter="0" />
+                                <Binding Path="SelectedItem.RunningProcess.Caption" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </MenuItem.Visibility>
+                    </MenuItem>
+
+
+                    <MenuItem Command="{Binding Path=BrowseSelectedItemProcessDirectoryCommand}">
+                        <MenuItem.Header>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Browse Process Directory '{0}'">
+                                        <Binding Path="SelectedItem.RunningProcess.ExecutablePath" Converter="{StaticResource FullFilePathToParentDirectoryConverter}" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </MenuItem.Header>
+                        <MenuItem.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RunningProcess" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RunningProcess.ExecutablePath" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </MenuItem.Visibility>
+                    </MenuItem>
+
+
+                    <Separator>
+                        <Separator.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo.Latitude" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo.Longitude" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </Separator.Visibility>
+                    </Separator>
+                    <MenuItem Command="{Binding Path=LaunchSelectedItemCoordinatesInBrowserMapCommand}">
+                        <MenuItem.Header>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Display Remote Location In Map ('http://maps.google.com/maps?q={0},{1}')">
+                                        <Binding Path="SelectedItem.RemoteGeo.Latitude" />
+                                        <Binding Path="SelectedItem.RemoteGeo.Longitude" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </MenuItem.Header>
+                        <MenuItem.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo.Latitude" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo.Longitude" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </MenuItem.Visibility>
+                    </MenuItem>
+
+
+                    <Separator>
+                        <Separator.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteAddress" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </Separator.Visibility>
+                    </Separator>
+                    <MenuItem Command="{Binding Path=LaunchSelectedItemRemoteAddressInBrowserCommand}">
+                        <MenuItem.Header>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Open 'http://{0}' In Browser">
+                                        <Binding Path="SelectedItem.RemoteAddress" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </MenuItem.Header>
+                        <MenuItem.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteAddress" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </MenuItem.Visibility>
+                    </MenuItem>
+
+
+                    <Separator>
+                        <Separator.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo.Isp" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </Separator.Visibility>
+                    </Separator>
+                    <MenuItem Command="{Binding Path=LaunchStartPageSearchForSelectedItemIspInBrowserCommand}">
+                        <MenuItem.Header>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Search For Information On Isp '{0}'">
+                                        <Binding Path="SelectedItem.RemoteGeo.Isp" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </MenuItem.Header>
+                        <MenuItem.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteGeo.Isp" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </MenuItem.Visibility>
+                    </MenuItem>
+
+                    <MenuItem Command="{Binding Path=LaunchStartPageSearchForSelectedRemoteAddressInBrowserCommand}">
+                        <MenuItem.Header>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="Search For Information On Remote Address '{0}'">
+                                        <Binding Path="SelectedItem.RemoteAddress" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </MenuItem.Header>
+                        <MenuItem.Visibility>
+                            <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                                <Binding Path="SelectedItem" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource ObjectIsNotNullToBoolConverter}" />
+                                <Binding Path="SelectedItem.RemoteAddress" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource StringIsNotNullOrWhiteSpaceToBoolConverter}" />
+                            </MultiBinding>
+                        </MenuItem.Visibility>
+                    </MenuItem>
+
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+    </Grid>
+</Window>
