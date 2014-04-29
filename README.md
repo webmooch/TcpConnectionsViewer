@@ -1,3 +1,6 @@
+#Tcp Connections Viewer
+
+
 TCP Connections Viewer is a portable executable that displays detailed information about active TCP connections on the local system.
 
 Other mainstream connection viewer programs already exist but they are closed-source and do not include all the features TCP Connections Viewer offers. 
@@ -33,7 +36,7 @@ Columns can be displayed or hidden by right clicking on any column header and ch
 Certain process information is only available when the program is launched in elevated (administrative) mode, as is the ability to terminate connections.
 
 
-##Available Columns
+##Column Data
 
 - Local Address
 - Local Hostname
