@@ -14,10 +14,7 @@ namespace TcpConnectionsViewer.Converters
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             var state = value as TcpState?;
-            if (state == null)
-                throw new ArgumentException("Value must be of type TcpState");
-
-            return state == TcpState.Established;
+            return state == null ? false : state == TcpState.Established;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

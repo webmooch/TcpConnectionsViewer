@@ -36,6 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -51,7 +53,14 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Converters\TODO.cs" />
+    <Compile Include="Converters\BoolToValueConverterTests.cs" />
+    <Compile Include="Converters\BoolToVisibilityConverterTests.cs" />
+    <Compile Include="Converters\FullFilePathToParentDirectoryConverterTests.cs" />
+    <Compile Include="Converters\IntIsGreaterThanToBoolConverterTests.cs" />
+    <Compile Include="Converters\MultiBooleanToVisibilityConverterTests.cs" />
+    <Compile Include="Converters\ObjectIsNotNullToBoolConverterTests.cs" />
+    <Compile Include="Converters\StringIsNotNullOrWhiteSpaceToBoolConverterTests.cs" />
+    <Compile Include="Converters\TcpStateEqualsEstablishedToBoolConverterTests.cs" />
     <Compile Include="Model\CommonTcpServicesTests.cs" />
     <Compile Include="Model\DnsHostCacheTests.cs" />
     <Compile Include="Model\ExtensionsTests.cs" />
