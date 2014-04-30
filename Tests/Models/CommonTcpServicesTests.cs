@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TcpConnectionsViewer.Models;
 
-namespace ModelTests
+namespace Tests.Converters
 {
     [TestClass]
     public class CommonTcpServicesTests

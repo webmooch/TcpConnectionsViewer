@@ -61,16 +61,16 @@
     <Compile Include="Converters\ObjectIsNotNullToBoolConverterTests.cs" />
     <Compile Include="Converters\StringIsNotNullOrWhiteSpaceToBoolConverterTests.cs" />
     <Compile Include="Converters\TcpStateEqualsEstablishedToBoolConverterTests.cs" />
-    <Compile Include="Model\CommonTcpServicesTests.cs" />
-    <Compile Include="Model\DnsHostCacheTests.cs" />
-    <Compile Include="Model\ExtensionsTests.cs" />
-    <Compile Include="Model\GeoIpCacheTests.cs" />
-    <Compile Include="Model\IpHlpApiTests.cs" />
-    <Compile Include="Model\IpTests.cs" />
-    <Compile Include="Model\KnownMacManufacturersTests.cs" />
-    <Compile Include="Model\ProcessMonitorTests.cs" />
+    <Compile Include="Models\CommonTcpServicesTests.cs" />
+    <Compile Include="Models\DnsHostCacheTests.cs" />
+    <Compile Include="Models\ExtensionsTests.cs" />
+    <Compile Include="Models\GeoIpCacheTests.cs" />
+    <Compile Include="Models\IpHlpApiTests.cs" />
+    <Compile Include="Models\IpTests.cs" />
+    <Compile Include="Models\KnownMacManufacturersTests.cs" />
+    <Compile Include="Models\ProcessMonitorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Model\VersionDataTests.cs" />
+    <Compile Include="Models\VersionDataTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TcpConnectionsViewer\TcpConnectionsViewer.csproj">
