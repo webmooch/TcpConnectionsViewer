@@ -17,6 +17,7 @@ namespace TcpConnectionsViewer.ViewModels
 {
     internal class MainViewModel : INotifyPropertyChanged, IDisposable
     {
+        // TODO: Remove 'kill connection' option totally if not running in elevated mode
         // TODO: Configure and cleanup with custom stylecop rules
 
         // Known Issues:

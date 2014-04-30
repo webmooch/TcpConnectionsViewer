@@ -1,10 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using TcpConnectionsViewer.Converters;
 
 namespace Tests.Converters
@@ -12,25 +9,30 @@ namespace Tests.Converters
     [TestClass]
     public class TcpStateEqualsEstablishedToBoolConverterTests
     {
+        private static TcpStateEqualsEstablishedToBoolConverter converter = new TcpStateEqualsEstablishedToBoolConverter();
+
         [TestMethod]
         public void TcpStateEqualsEstablishedToBoolConverter_TrueTest()
         {
-            var converter = new TcpStateEqualsEstablishedToBoolConverter();
             Assert.IsTrue((bool)converter.Convert(TcpState.Established, null, null, null));
         }
 
         [TestMethod]
         public void TcpStateEqualsEstablishedToBoolConverter_OtherStateTest()
         {
-            var converter = new TcpStateEqualsEstablishedToBoolConverter();
             Assert.IsFalse((bool)converter.Convert(TcpState.FinWait2, null, null, null));
         }
 
         [TestMethod]
-        public void TcpStateEqualsEstablishedToBoolConverter_InvalidArgTest()
+        public void TcpStateEqualsEstablishedToBoolConverter_JunkTest()
         {
-            var converter = new TcpStateEqualsEstablishedToBoolConverter();
-            Assert.IsFalse((bool)converter.Convert(DayOfWeek.Friday, null, null, null));
+            Assert.IsTrue(DependencyProperty.UnsetValue == converter.Convert(DayOfWeek.Friday, null, null, null));
+        }
+
+        [TestMethod]
+        public void TcpStateEqualsEstablishedToBoolConverter_NullTest()
+        {
+            Assert.IsTrue(DependencyProperty.UnsetValue == converter.Convert(null, null, null, null));
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
@@ -10,20 +7,23 @@ namespace TcpConnectionsViewer.Converters
 {
     internal class MultiBooleanToVisibilityConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            bool visible = true;
             foreach (object value in values)
-                if (value is bool)
-                    visible = visible && (bool)value;
+            {
+                if (value == DependencyProperty.UnsetValue)
+                    return DependencyProperty.UnsetValue;
 
-            if (visible)
-                return Visibility.Visible;
-            else
-                return Visibility.Collapsed;
+                if (!(value is bool))
+                    return DependencyProperty.UnsetValue;
+
+                if (!(bool)value)
+                    return Visibility.Collapsed;
+            }
+            return Visibility.Visible;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
