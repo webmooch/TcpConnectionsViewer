@@ -1,11 +1,11 @@
 #Tcp Connections Viewer
 
 
-TCP Connections Viewer is a portable executable that displays detailed information about active TCP connections on the local system.
+TCP Connections Viewer is a portable executable that displays detailed information about all TCP connections on the local system.
 
-Other mainstream connection viewer programs already exist but they are closed-source and do not include all the features TCP Connections Viewer offers. 
+Existing mainstream connection viewer programs are generally closed-source and do not provide as much output-detail as this program.
 
-The program is still in its infancy but more features and UI options are planned.
+TCP Connections Viewer is still in its infancy but more features and UI options are planned.
 
 TCP Connections Viewer utilises v4.5 of the .NET framework and is written in C# with WPF MVVM.
 
