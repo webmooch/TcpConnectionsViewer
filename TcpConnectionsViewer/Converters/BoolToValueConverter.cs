@@ -5,9 +5,6 @@ using System.Windows.Data;
 
 namespace TcpConnectionsViewer.Converters
 {
-    /// <summary>
-    /// http://geekswithblogs.net/codingbloke/archive/2010/05/28/a-generic-boolean-value-converter.aspx
-    /// </summary>
     internal class BoolToValueConverter<T> : IValueConverter
     {
         public T FalseValue { get; set; }

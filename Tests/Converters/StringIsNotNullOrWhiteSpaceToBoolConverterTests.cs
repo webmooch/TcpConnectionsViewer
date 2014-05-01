@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Windows;
 using TcpConnectionsViewer.Converters;
 
 namespace Tests.Converters
@@ -30,7 +31,7 @@ namespace Tests.Converters
         [TestMethod]
         public void StringIsNotNullOrWhiteSpaceToBoolConverter_NonStringTest()
         {
-            Assert.IsFalse((bool)converter.Convert(DayOfWeek.Friday, null, null, null));
+            Assert.AreSame(DependencyProperty.UnsetValue, converter.Convert(DayOfWeek.Friday, null, null, null));
         }
     }
 }
