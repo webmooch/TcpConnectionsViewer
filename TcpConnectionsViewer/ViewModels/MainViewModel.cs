@@ -18,6 +18,7 @@ namespace TcpConnectionsViewer.ViewModels
     internal class MainViewModel : INotifyPropertyChanged, IDisposable
     {
         // TODO: Remove 'kill connection' option totally if not running in elevated mode
+        // TODO: Will slam geo server if doing internal multi-host port scan - Dont do geo lookup if IP is private (Create method "IsReservedNetworkAddress" or similar): http://stackoverflow.com/questions/2814002/private-ip-address-identifier-in-regular-expression
         // TODO: Configure and cleanup with custom stylecop rules
 
         // Known Issues:
@@ -37,7 +38,6 @@ namespace TcpConnectionsViewer.ViewModels
         // TODO: Replicate column selection into main menu view branch - http://stackoverflow.com/questions/150150/how-do-i-share-a-menu-definition-between-a-context-menu-and-a-regular-menu-in-wp
         // TODO: Persist columns position and sort order: http://bengribaudo.com/blog/2012/03/14/1942/saving-restoring-wpf-datagrid-columns-size-sorting-and-order http://stackoverflow.com/questions/6468488/retain-the-user-defined-sort-order-of-a-wpf-datagrid http://www.codeproject.com/Articles/37087/DataGridView-that-Saves-Column-Order-Width-and-Vis
         // TODO: Persist window size and position: http://www.codeproject.com/Articles/50761/Save-and-Restore-WPF-Window-Size-Position-and-or-S http://stackoverflow.com/questions/847752/net-wpf-remember-window-size-between-sessions
-        // TODO: Dont do geo lookup if IP is private (Create method "IsReservedNetworkAddress" or similar): http://stackoverflow.com/questions/2814002/private-ip-address-identifier-in-regular-expression
 
         // Control over data:
         // TODO: Add options down bottom (insert window that slides up and then slides back back - contains all advanced options) - or as options dialog box
@@ -527,9 +527,9 @@ namespace TcpConnectionsViewer.ViewModels
             this.DisplayAllColumnsCommand = new Helpers.DelegateCommand(param => this.DisplayAllColumns(), param => true);
             this.VisitProjectHomepageCommand = new Helpers.DelegateCommand(param => this.VisitProjectHomepage(), param => true);
 
-            connectionsMonitor = new TcpConnectionsMonitor(this.dispatcher, new TimeSpan(0, 0, 1));
-            this.TcpInfo = connectionsMonitor.TcpInfo;
-            connectionsMonitor.BeginMonitoringConnectionsAsync();
+            this.connectionsMonitor = new TcpConnectionsMonitor(this.dispatcher, new TimeSpan(0, 0, 1));
+            this.TcpInfo = this.connectionsMonitor.TcpInfo;
+            this.connectionsMonitor.BeginMonitoringConnectionsAsync();
         }
 
         private void VisitProjectHomepage()

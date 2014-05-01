@@ -18,8 +18,8 @@ namespace TcpConnectionsViewer.Models
         public int ProcessId { get; private set; }
         public TcpState State { get; private set; }
 
-        private string _remoteMacAddressManufacturer;
-        public string RemoteMacAddressManufacturer
+        private KnownMacManufacturer _remoteMacAddressManufacturer;
+        public KnownMacManufacturer RemoteMacAddressManufacturer
         {
             get { return _remoteMacAddressManufacturer; }
             set
@@ -110,15 +110,11 @@ namespace TcpConnectionsViewer.Models
             var remoteMacAddress = IpHlpApi.ResolvePhysicalAddress(this.RemoteAddress);
             this.RemoteMacAddress = remoteMacAddress != null && !string.IsNullOrWhiteSpace(remoteMacAddress.ToString()) ? remoteMacAddress.ToString() : null;
 
-
-            if (!string.IsNullOrWhiteSpace(this.RemoteMacAddress))
+            Task.Factory.StartNew(() =>
             {
-                Task.Factory.StartNew(() =>
-                {
-                    var macManufacturer = KnownMacManufacturers.Instance.Lookup(this.RemoteMacAddress);
-                    new Action(() => this.RemoteMacAddressManufacturer = macManufacturer.Name).ExecuteInSpecificThread(dispatcher);
-                });
-            }
+                var macManufacturer = KnownMacManufacturers.Instance.Lookup(this.RemoteMacAddress);
+                new Action(() => this.RemoteMacAddressManufacturer = macManufacturer).ExecuteInSpecificThread(dispatcher);
+            });
 
             Task.Factory.StartNew(() =>
                 {

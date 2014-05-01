@@ -26,7 +26,10 @@ namespace TcpConnectionsViewer.Models
 
         public KnownMacManufacturer Lookup(string macAddr)
         {
-            return jsonData.Where(x => macAddr.StartsWith(x.PrefixId)).Select(y => y).FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(macAddr))
+                return new KnownMacManufacturer() { PrefixId = macAddr };
+
+            return jsonData.Where(x => macAddr.StartsWith(x.PrefixId)).Select(y => y).DefaultIfEmpty(new KnownMacManufacturer() { PrefixId = macAddr}).FirstOrDefault();
         }
     }
 }
