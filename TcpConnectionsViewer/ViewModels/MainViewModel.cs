@@ -53,7 +53,7 @@ namespace TcpConnectionsViewer.ViewModels
         // TODO: Option to save default settings to either profile xml file (currently how it's done) or as xml file saved alongside the exe. If both exist use which?
         // TODO: Live statistics summary / overview
         // TODO: scrolling log of all connection state changes, their duration, timestamps, etc
-        // TODO: Displaying and moniotoring total data transferred per connection
+        // TODO: Displaying and monitoring total data transferred per connection
         // TODO: Colours for recently added entries? Colours to indicate connection state?
 
         private readonly Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
@@ -90,7 +90,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand TerminateAllConnectionsToSelectedItemRemoteAddressCommand
         {
             get { return _terminateAllConnectionsToSelectedItemRemoteAddressCommand; }
-            set
+            private set
             {
                 _terminateAllConnectionsToSelectedItemRemoteAddressCommand = value;
                 OnPropertyChanged();
@@ -102,7 +102,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand TerminateSelectedItemProcessCommand
         {
             get { return _terminateSelectedItemProcessCommand; }
-            set
+            private set
             {
                 _terminateSelectedItemProcessCommand = value;
                 OnPropertyChanged();
@@ -113,7 +113,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand BrowseSelectedItemProcessDirectoryCommand
         {
             get { return _browseSelectedItemProcessDirectoryCommand; }
-            set
+            private set
             {
                 _browseSelectedItemProcessDirectoryCommand = value;
                 OnPropertyChanged();
@@ -124,7 +124,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand LaunchSelectedItemCoordinatesInBrowserMapCommand
         {
             get { return _launchSelectedItemCoordinatesInBrowserMapCommand; }
-            set
+            private set
             {
                 _launchSelectedItemCoordinatesInBrowserMapCommand = value;
                 OnPropertyChanged();
@@ -135,7 +135,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand LaunchSelectedItemRemoteAddressInBrowserCommand
         {
             get { return _launchSelectedItemRemoteAddressInBrowserCommand; }
-            set
+            private set
             {
                 _launchSelectedItemRemoteAddressInBrowserCommand = value;
                 OnPropertyChanged();
@@ -146,7 +146,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand LaunchStartPageSearchForSelectedItemIspInBrowserCommand
         {
             get { return _launchStartPageSearchForSelectedItemIspInBrowserCommand; }
-            set
+            private set
             {
                 _launchStartPageSearchForSelectedItemIspInBrowserCommand = value;
                 OnPropertyChanged();
@@ -157,7 +157,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand LaunchStartPageSearchForSelectedRemoteAddressInBrowserCommand
         {
             get { return _launchStartPageSearchForSelectedRemoteAddressInBrowserCommand; }
-            set
+            private set
             {
                 _launchStartPageSearchForSelectedRemoteAddressInBrowserCommand = value;
                 OnPropertyChanged();
@@ -168,7 +168,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand DisplayDefaultColumnsCommand
         {
             get { return _displayDefaultColumnsCommand; }
-            set
+            private set
             {
                 _displayDefaultColumnsCommand = value;
                 OnPropertyChanged();
@@ -179,7 +179,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand DisplayAllColumnsCommand
         {
             get { return _displayAllColumnsCommand; }
-            set
+            private set
             {
                 _displayAllColumnsCommand = value;
                 OnPropertyChanged();
@@ -190,7 +190,7 @@ namespace TcpConnectionsViewer.ViewModels
         public ICommand VisitProjectHomepageCommand
         {
             get { return _visitProjectHomepageCommand; }
-            set
+            private set
             {
                 _visitProjectHomepageCommand = value;
                 OnPropertyChanged();
