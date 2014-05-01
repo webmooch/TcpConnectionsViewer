@@ -406,7 +406,7 @@ namespace TcpConnectionsViewer.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://github.com/webmooch/TcpConnectionsViewer/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://webmooch.net/RedirectToTcpConnectionsViewerHome.html")]
         public string ProjectHomepageUri {
             get {
                 return ((string)(this["ProjectHomepageUri"]));

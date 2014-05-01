@@ -31,7 +31,7 @@ namespace Tests.Converters
         public void KnownMacManufacturers_FakeMacTest()
         {
             var response = KnownMacManufacturers.Instance.Lookup("BEEEEF");
-            Assert.IsNull(response);
+            Assert.IsTrue(response.Name == null);
         }
 
     }
