@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TcpConnectionsViewer.Properties;
 using TcpConnectionsViewer.Models;
+using System.Reflection;
 
 namespace TcpConnectionsViewer
 {
@@ -28,7 +29,13 @@ namespace TcpConnectionsViewer
 
         public MainWindow()
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             InitializeComponent();
+        }
+
+        void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            PromptToSendCrashReport(e);
         }
 
         private void DataGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -101,6 +108,39 @@ namespace TcpConnectionsViewer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             InteractiveCheckForUpdatesAsync(showMsgIfFailure: false, showMsgIfAlreadyLatestVersion: false);
+        }
+
+        private static void PromptToSendCrashReport(UnhandledExceptionEventArgs e)
+        {
+            if (e != null)
+            {
+                var exception = e.ExceptionObject as Exception;
+                if (exception != null)
+                {
+                    try
+                    {
+                        var stackTrace = new StackTrace(exception, true) == null ? "null" : new StackTrace(exception, true).ToString();
+                        var message = string.IsNullOrWhiteSpace(exception.Message) ? "null" : exception.Message;
+                        var targetSite = exception.TargetSite != null ? string.IsNullOrWhiteSpace(exception.StackTrace) ? "null" : exception.TargetSite.ToString() : "null";
+                        var hResult = exception.HResult;
+
+                        var response = MessageBox.Show("Sorry, an unexpected error has occurred.\r\n\r\nWould you please allow an error report to be sent to the developer?\r\n\r\nNo personally identifiable information is collected.", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
+                        if (response == MessageBoxResult.Yes)
+                        {
+                            var subject = string.Format("Error: {0} v{1}", Assembly.GetExecutingAssembly().GetName().Name, Assembly.GetExecutingAssembly().GetName().Version);
+                            var body = string.Format("M:{0}{4}TS:{1}{4}hR:{2}{4}ST:{3}", message, targetSite, hResult, stackTrace, "|");
+                            PopupSendEmail(Settings.Default.CrashEmailAddress, subject, body);
+                        }
+                    }
+                    catch (Exception)
+                    { }
+                }
+            }
+        }
+
+        private static void PopupSendEmail(string emailAddress, string subject, string body)
+        {
+            Process.Start(string.Format("mailto:{0}?subject={1}&body={2}", emailAddress, subject, body));
         }
 
         private void InteractiveCheckForUpdatesAsync(bool showMsgIfFailure, bool showMsgIfAlreadyLatestVersion)

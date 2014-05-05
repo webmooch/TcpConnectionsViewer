@@ -660,7 +660,10 @@ namespace TcpConnectionsViewer.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(string.Format("Exception encountered while launching URL '{0}':\r\n\r\n{1}", target, ex.Message), "", MessageBoxButton.OK, MessageBoxImage.Warning);
+                if (!ex.IsCritical())
+                    MessageBox.Show(string.Format("Exception encountered while launching URL '{0}':\r\n\r\n{1}", target, ex.Message), "", MessageBoxButton.OK, MessageBoxImage.Warning);
+                else
+                    throw;
             }
         }
 
