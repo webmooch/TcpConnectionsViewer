@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Windows.Threading;
 
@@ -12,6 +13,8 @@ namespace TcpConnectionsViewer.Models
         private BackgroundWorker backgroundWorker;
 
         public ObservableCollection<TcpConnection> TcpInfo { get; private set; }
+        public string AsyncPropertyPendingText { get; private set; }
+        public string AsyncPropertyLoadingText { get; private set; }
 
         private TimeSpan _refreshInterval;
         private object _refreshIntervalLock = new object();
@@ -36,11 +39,13 @@ namespace TcpConnectionsViewer.Models
             }
         }
 
-        public TcpConnectionsMonitor(Dispatcher dispatcher, TimeSpan refreshInterval)
+        public TcpConnectionsMonitor(Dispatcher dispatcher, TimeSpan refreshInterval, string asyncPropertyPendingText, string asyncPropertyLoadingText)
         {
             this.dispatcher = dispatcher;
             this.RefreshInterval = refreshInterval;
-            TcpInfo = new ObservableCollection<TcpConnection>();
+            this.TcpInfo = new ObservableCollection<TcpConnection>();
+            this.AsyncPropertyPendingText = asyncPropertyPendingText;
+            this.AsyncPropertyLoadingText = asyncPropertyLoadingText;
         }
 
         public void BeginMonitoringConnectionsAsync()
@@ -55,16 +60,7 @@ namespace TcpConnectionsViewer.Models
                     // for each old entry that doesnt exist in new list, remove
                     for (int i = 0; i < TcpInfo.Count; i++)
                     {
-                        bool existingFound = false;
-                        for (int j = 0; j < newConnections.Length; j++)
-                        {
-                            if (TcpInfo[i].Equals(newConnections[j]))
-                            {
-                                existingFound = true;
-                                break;
-                            }
-                        }
-
+                        var existingFound = newConnections.Any(x => TcpInfo[i].Equals(x));
                         if (!existingFound)
                         {
                             new Action(() => TcpInfo.RemoveAt(i)).ExecuteInSpecificThread(dispatcher);
@@ -75,18 +71,17 @@ namespace TcpConnectionsViewer.Models
                     // for each new entry that doesnt exist, add
                     for (int i = 0; i < newConnections.Length; i++)
                     {
-                        bool existingFound = false;
-                        for (int j = 0; j < TcpInfo.Count; j++)
-                        {
-                            if (TcpInfo[j].Equals(newConnections[i]))
-                            {
-                                existingFound = true;
-                                break;
-                            }
-                        }
+                        bool existingFound = TcpInfo.Any(x => x.Equals(newConnections[i]));
                         if (!existingFound)
                         {
-                            var entry = new TcpConnection(newConnections[i].LocalPort, newConnections[i].LocalAddress.ToString(), newConnections[i].RemotePort, newConnections[i].RemoteAddress.ToString(), newConnections[i].dwOwningPid, newConnections[i].dwState, dispatcher);
+                            var entry = new TcpConnection(newConnections[i].LocalPort,
+                                newConnections[i].LocalAddress.ToString(),
+                                newConnections[i].RemotePort,
+                                newConnections[i].RemoteAddress.ToString(),
+                                newConnections[i].dwOwningPid,
+                                newConnections[i].dwState,
+                                AsyncPropertyPendingText,
+                                AsyncPropertyLoadingText);
                             new Action(() => TcpInfo.Add(entry)).ExecuteInSpecificThread(dispatcher);
                         }
                     }

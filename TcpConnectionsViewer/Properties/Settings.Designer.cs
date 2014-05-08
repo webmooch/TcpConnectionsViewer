@@ -421,5 +421,41 @@ namespace TcpConnectionsViewer.Properties {
                 return ((string)(this["CrashEmailAddress"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("pending")]
+        public string AsyncPropertyPendingText {
+            get {
+                return ((string)(this["AsyncPropertyPendingText"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("loading")]
+        public string AsyncPropertyLoadingText {
+            get {
+                return ((string)(this["AsyncPropertyLoadingText"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("EEEEEE")]
+        public string AsyncPropertyPendingTextColour {
+            get {
+                return ((string)(this["AsyncPropertyPendingTextColour"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("CCCCCC")]
+        public string AsyncPropertyLoadingTextColour {
+            get {
+                return ((string)(this["AsyncPropertyLoadingTextColour"]));
+            }
+        }
     }
 }

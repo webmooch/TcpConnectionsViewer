@@ -527,7 +527,7 @@ namespace TcpConnectionsViewer.ViewModels
             this.DisplayAllColumnsCommand = new Helpers.DelegateCommand(param => this.DisplayAllColumns(), param => true);
             this.VisitProjectHomepageCommand = new Helpers.DelegateCommand(param => this.VisitProjectHomepage(), param => true);
 
-            this.connectionsMonitor = new TcpConnectionsMonitor(this.dispatcher, new TimeSpan(0, 0, 1));
+            this.connectionsMonitor = new TcpConnectionsMonitor(this.dispatcher, new TimeSpan(0, 0, 1), Settings.Default.AsyncPropertyPendingText, Settings.Default.AsyncPropertyLoadingText);
             this.TcpInfo = this.connectionsMonitor.TcpInfo;
             this.connectionsMonitor.BeginMonitoringConnectionsAsync();
         }
@@ -566,18 +566,18 @@ namespace TcpConnectionsViewer.ViewModels
 
         private void LaunchStartPageSearchForSelectedItemIspInBrowser()
         {
-            if (SelectedItem != null && SelectedItem.RemoteGeo != null && !string.IsNullOrWhiteSpace(SelectedItem.RemoteGeo.Isp))
+            if (SelectedItem != null && SelectedItem.RemoteGeoAsync != null && !string.IsNullOrWhiteSpace(SelectedItem.RemoteGeoAsync.Isp))
             {
-                string target = string.Format(@"https://startpage.com/do/search?query=%22{0}%22&cat=web&language=english", SelectedItem.RemoteGeo.Isp); //todo: escape isp string
+                string target = string.Format(@"https://startpage.com/do/search?query=%22{0}%22&cat=web&language=english", SelectedItem.RemoteGeoAsync.Isp); //todo: escape isp string
                 LaunchUrlInBrowser(target);
             }
         }
 
         private void LaunchSelectedItemCoordinatesInBrowserMap()
         {
-            if (SelectedItem != null && SelectedItem.RemoteGeo != null && !string.IsNullOrWhiteSpace(SelectedItem.RemoteGeo.Latitude) && !string.IsNullOrWhiteSpace(SelectedItem.RemoteGeo.Longitude))
+            if (SelectedItem != null && SelectedItem.RemoteGeoAsync != null && !string.IsNullOrWhiteSpace(SelectedItem.RemoteGeoAsync.Latitude) && !string.IsNullOrWhiteSpace(SelectedItem.RemoteGeoAsync.Longitude))
             {
-                string target = string.Format(@"http://maps.google.com/maps?q={0},{1}", SelectedItem.RemoteGeo.Latitude, SelectedItem.RemoteGeo.Longitude);
+                string target = string.Format(@"http://maps.google.com/maps?q={0},{1}", SelectedItem.RemoteGeoAsync.Latitude, SelectedItem.RemoteGeoAsync.Longitude);
                 LaunchUrlInBrowser(target);
             }
         }
@@ -593,18 +593,18 @@ namespace TcpConnectionsViewer.ViewModels
 
         private void BrowseSelectedItemProcessDirectory()
         {
-            if (SelectedItem != null && SelectedItem.RunningProcess != null && !string.IsNullOrWhiteSpace(SelectedItem.RunningProcess.ExecutablePath))
+            if (SelectedItem != null && SelectedItem.RunningProcessAsync != null && !string.IsNullOrWhiteSpace(SelectedItem.RunningProcessAsync.ExecutablePath))
             {
                 try
                 {
-                    var fi = new FileInfo(SelectedItem.RunningProcess.ExecutablePath);
+                    var fi = new FileInfo(SelectedItem.RunningProcessAsync.ExecutablePath);
                     if (fi != null && fi.Directory != null && !string.IsNullOrWhiteSpace(fi.Directory.FullName))
                         Process.Start(fi.Directory.FullName);
                 }
                 catch (Exception ex)
                 {
                     if (!ex.IsCritical())
-                        MessageBox.Show(string.Format("Exception encountered while browsing process directory '{0}':\r\n\r\n{1}", SelectedItem.RunningProcess.ExecutablePath, ex.Message), "", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show(string.Format("Exception encountered while browsing process directory '{0}':\r\n\r\n{1}", SelectedItem.RunningProcessAsync.ExecutablePath, ex.Message), "", MessageBoxButton.OK, MessageBoxImage.Warning);
                     else
                         throw;
                 }

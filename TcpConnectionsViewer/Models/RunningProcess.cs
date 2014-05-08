@@ -16,25 +16,22 @@ namespace TcpConnectionsViewer.Models
             Invalid_Parameter = 21
         }
 
-        public int Id { get; private set; }
-        public string ExecutablePath { get; private set; }
-        public string Caption { get; private set; }
-        public string CommandLine { get; private set; }
-        public string Owner { get; private set; }
-        public DateTime? CreationDate { get; private set; }
-        public TimeSpan? TimeSinceCreation { get; private set; }
+        public int Id { get; set; }
+        public string ExecutablePath { get; set; }
+        public string Caption { get; set; }
+        public string CommandLine { get; set; }
+        public string Owner { get; set; }
+        public DateTime? CreationDate { get; set; }
 
-        public RunningProcess(int processId, string executablePath, string caption, string commandLine, string owner, DateTime? creationDate)
+        private TimeSpan? _timeSinceCreation;
+        public TimeSpan? TimeSinceCreation
         {
-            this.Id = processId;
-            this.ExecutablePath = executablePath;
-            this.Caption = caption;
-            this.CommandLine = commandLine;
-            this.Owner = owner;
-            this.CreationDate = creationDate;
-
-            if (this.CreationDate != null)
-                this.TimeSinceCreation = DateTime.Now - this.CreationDate;
+            get
+            {
+                if (this.CreationDate != null)
+                    _timeSinceCreation = DateTime.Now - this.CreationDate;
+                return _timeSinceCreation;
+            }
         }
 
         public static RunningProcess GetProcessByPid(int pid)
@@ -43,14 +40,15 @@ namespace TcpConnectionsViewer.Models
             {
                 using (var processClassInstance = new ManagementObject("root\\CIMV2", string.Format("Win32_Process.Handle='{0}'", pid), null))
                 {
-                    return new RunningProcess(
-                        pid,
-                        processClassInstance.Properties["ExecutablePath"].Value.ParseString(),
-                        processClassInstance.Properties["Caption"].Value.ParseString(),
-                        processClassInstance.Properties["CommandLine"].Value.ParseString(),
-                        GetOwner(processClassInstance),
-                        processClassInstance.Properties["CreationDate"].Value.ParseWMIDateTime()
-                        );
+                    return new RunningProcess()
+                    {
+                        Id = pid,
+                        ExecutablePath = processClassInstance.Properties["ExecutablePath"].Value.ParseString(),
+                        Caption = processClassInstance.Properties["Caption"].Value.ParseString(),
+                        CommandLine = processClassInstance.Properties["CommandLine"].Value.ParseString(),
+                        Owner = GetOwner(processClassInstance),
+                        CreationDate = processClassInstance.Properties["CreationDate"].Value.ParseWMIDateTime()
+                    };
                 }
             }
             catch (Exception ex)

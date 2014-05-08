@@ -48,10 +48,6 @@ namespace TcpConnectionsViewer.Models
             else // TODO: else if is on local subnet
                 result = LookupFromWeb(ipAddress);
 
-            //#if DEBUG
-            //            if (GeoCache.Any(x => x.Key.Equals(ipAddress)))
-            //                throw new Exception("IP already exists in geo cache");
-            //#endif
             GeoCache.TryAdd(ipAddress, result);
 
             string bleh;

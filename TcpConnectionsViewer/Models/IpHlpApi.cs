@@ -760,12 +760,11 @@ namespace TcpConnectionsViewer.Models
                 pTcpRow = Marshal.AllocCoTaskMem(Marshal.SizeOf(tcpRow));
                 Marshal.StructureToPtr(tcpRow, pTcpRow, false);
                 int result = SetTcpEntry(pTcpRow);
-                //if (result != 0) throw new Win32Exception(result);
                 switch (result)
                 {
                     case 0: break;
                     case -1: throw new Exception("Unsuccessful");
-                    case 65: throw new Exception("User has no sufficient privilege to execute this API successfully");
+                    case 65: throw new Exception("User has insufficient privilege to execute this API successfully");
                     case 87: throw new Exception("Specified port is not in state to be closed down");
                     default: throw new Exception(string.Format("Unknown error '{0}' ({1})",result,  new Win32Exception(result).Message));
                 }

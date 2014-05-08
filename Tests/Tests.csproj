@@ -60,6 +60,7 @@
     <Compile Include="Converters\IntIsGreaterThanToBoolConverterTests.cs" />
     <Compile Include="Converters\MultiBooleanToVisibilityConverterTests.cs" />
     <Compile Include="Converters\ObjectIsNotNullToBoolConverterTests.cs" />
+    <Compile Include="Converters\PendingLoadingStringsToBrushConverterTests.cs" />
     <Compile Include="Converters\StringIsNotNullOrWhiteSpaceToBoolConverterTests.cs" />
     <Compile Include="Converters\TcpStateEqualsEstablishedToBoolConverterTests.cs" />
     <Compile Include="Models\CommonTcpServicesTests.cs" />

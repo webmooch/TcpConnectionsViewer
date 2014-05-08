@@ -47,10 +47,6 @@ namespace TcpConnectionsViewer.Models
 
             for (int i = 0; i < result.AddressList.Length; i++)
             {
-//#if DEBUG
-//                if (DnsCache.Any(x => x.Key.Equals(result.AddressList[i])))
-//                    throw new Exception("IP already exists in dns cache");
-//#endif
                 DnsCache.TryAdd(result.AddressList[i], result.HostName);
             }
 

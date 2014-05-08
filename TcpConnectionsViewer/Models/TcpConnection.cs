@@ -13,91 +13,188 @@ namespace TcpConnectionsViewer.Models
         public string LocalAddress { get; private set; }
         public ushort LocalPort { get; private set; }
         public string RemoteAddress { get; private set; }
-        public string RemoteMacAddress { get; private set; }
         public ushort RemotePort { get; private set; }
         public int ProcessId { get; private set; }
         public TcpState State { get; private set; }
+        public string PendingText { get; private set; }
+        public string LoadingText { get; private set; }
 
-        private KnownMacManufacturer _remoteMacAddressManufacturer;
-        public KnownMacManufacturer RemoteMacAddressManufacturer
+        private object _remoteMacAddressAsyncLock = new object();
+        private string _remoteMacAddressAsync;
+        public string RemoteMacAddressAsync
         {
-            get { return _remoteMacAddressManufacturer; }
+            get 
+            {
+                lock (_remoteMacAddressAsyncLock)
+                {
+                    return _remoteMacAddressAsync;
+                }
+            }
             set
             {
-                _remoteMacAddressManufacturer = value;
-                OnPropertyChanged();
+                lock (_remoteMacAddressAsyncLock)
+                {
+                    _remoteMacAddressAsync = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
-        private CommonService _localPortCommonService;
-        public CommonService LocalPortCommonService
+        private object _remoteMacAddressManufacturerAsyncLock = new object();
+        private KnownMacManufacturer _remoteMacAddressManufacturerAsync;
+        public KnownMacManufacturer RemoteMacAddressManufacturerAsync
         {
-            get { return _localPortCommonService; }
+            get 
+            {
+                lock (_remoteMacAddressManufacturerAsyncLock)
+                {
+                    return _remoteMacAddressManufacturerAsync;
+                }
+            }
             set
             {
-                _localPortCommonService = value;
-                OnPropertyChanged();
+                lock (_remoteMacAddressManufacturerAsyncLock)
+                {
+                    _remoteMacAddressManufacturerAsync = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
-        private CommonService _remotePortCommonService;
-        public CommonService RemotePortCommonService
+        private object _localPortCommonServiceAsyncLock = new object();
+        private CommonService _localPortCommonServiceAsync;
+        public CommonService LocalPortCommonServiceAsync
         {
-            get { return _remotePortCommonService; }
+            get 
+            {
+                lock (_localPortCommonServiceAsyncLock)
+                {
+                    return _localPortCommonServiceAsync;
+                }
+            }
             set
             {
-                _remotePortCommonService = value;
-                OnPropertyChanged();
+                lock (_localPortCommonServiceAsyncLock)
+                {
+                    _localPortCommonServiceAsync = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
-        private RunningProcess _runningProcess;
-        public RunningProcess RunningProcess
+        private object _remotePortCommonServiceAsyncLock = new object();
+        private CommonService _remotePortCommonServiceAsync;
+        public CommonService RemotePortCommonServiceAsync
         {
-            get { return _runningProcess; }
+            get 
+            {
+                lock (_remotePortCommonServiceAsyncLock)
+                {
+                    return _remotePortCommonServiceAsync;
+                }
+            }
             set
             {
-                _runningProcess = value;
-                OnPropertyChanged();
+                lock (_remotePortCommonServiceAsyncLock)
+                {
+                    _remotePortCommonServiceAsync = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
-        private string _remoteHostname;
-        public string RemoteHostname
+        private object _runningProcessAsyncLock = new object();
+        private RunningProcess _runningProcessAsync;
+        public RunningProcess RunningProcessAsync
         {
-            get { return _remoteHostname; }
+            get 
+            {
+                lock (_runningProcessAsyncLock)
+                {
+                    return _runningProcessAsync;
+                }
+            }
             set
             {
-                _remoteHostname = value;
-                OnPropertyChanged();
+                lock (_runningProcessAsyncLock)
+                {
+                    _runningProcessAsync = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
-        private string _localHostname;
-        public string LocalHostname
+        private object _remoteHostnameAsyncLock = new object();
+        private string _remoteHostnameAsync;
+        public string RemoteHostnameAsync
         {
-            get { return _localHostname; }
+            get 
+            {
+                lock (_remoteHostnameAsyncLock)
+                {
+                    return _remoteHostnameAsync;
+                }
+            }
             set
             {
-                _localHostname = value;
-                OnPropertyChanged();
+                lock (_remoteHostnameAsyncLock)
+                {
+                    _remoteHostnameAsync = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
-        private GeoIpEntry _remoteGeo;
-        public GeoIpEntry RemoteGeo
+        private object _localHostnameAsyncLock = new object();
+        private string _localHostnameAsync;
+        public string LocalHostnameAsync
         {
-            get { return _remoteGeo; }
+            get 
+            {
+                lock (_localHostnameAsyncLock)
+                {
+                    return _localHostnameAsync;
+                }
+            }
             set
             {
-                _remoteGeo = value;
-                OnPropertyChanged();
+                lock (_localHostnameAsyncLock)
+                {
+                    _localHostnameAsync = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
-        private readonly Dispatcher dispatcher;
+        private object _remoteGeoAsyncLock = new object();
+        private GeoIpEntry _remoteGeoAsync;
+        public GeoIpEntry RemoteGeoAsync
+        {
+            get 
+            {
+                lock (_remoteGeoAsyncLock)
+                {
+                    return _remoteGeoAsync;
+                }
+            }
+            set
+            {
+                lock (_remoteGeoAsyncLock)
+                {
+                    _remoteGeoAsync = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        public TcpConnection(ushort localPort, string localAddress, ushort remotePort, string remoteAddress, int processId, TcpState state, Dispatcher dispatcher)
+        public TcpConnection(ushort localPort,
+            string localAddress,
+            ushort remotePort,
+            string remoteAddress,
+            int processId,
+            TcpState state,
+            string pendingText,
+            string loadingText)
         {
             this.LocalPort = localPort;
             this.LocalAddress = localAddress;
@@ -105,51 +202,68 @@ namespace TcpConnectionsViewer.Models
             this.RemoteAddress = remoteAddress;
             this.ProcessId = processId;
             this.State = state;
-            this.dispatcher = dispatcher;
+            this.PendingText = pendingText;
+            this.LoadingText = loadingText;
 
-            var remoteMacAddress = IpHlpApi.ResolvePhysicalAddress(this.RemoteAddress);
-            this.RemoteMacAddress = remoteMacAddress != null && !string.IsNullOrWhiteSpace(remoteMacAddress.ToString()) ? remoteMacAddress.ToString() : null;
 
-            Task.Factory.StartNew(() =>
-            {
-                var macManufacturer = KnownMacManufacturers.Instance.Lookup(this.RemoteMacAddress);
-                new Action(() => this.RemoteMacAddressManufacturer = macManufacturer).ExecuteInSpecificThread(dispatcher);
-            });
-
+            RemoteMacAddressAsync = PendingText;
+            RemoteMacAddressManufacturerAsync = CreatePendingInstance<KnownMacManufacturer>();
             Task.Factory.StartNew(() =>
                 {
-                    var localPortCommonService = CommonTcpServices.Instance.Lookup(this.LocalPort);
-                    new Action(() => this.LocalPortCommonService = localPortCommonService).ExecuteInSpecificThread(dispatcher);
+                    RemoteMacAddressAsync = LoadingText;
+                    var remoteMacAddress = IpHlpApi.ResolvePhysicalAddress(RemoteAddress);
+                    RemoteMacAddressAsync = remoteMacAddress != null && !string.IsNullOrWhiteSpace(remoteMacAddress.ToString()) ? remoteMacAddress.ToString() : null;
+
+                    RemoteMacAddressManufacturerAsync = CreateLoadingInstance<KnownMacManufacturer>();
+                    RemoteMacAddressManufacturerAsync = KnownMacManufacturers.Instance.Lookup(RemoteMacAddressAsync);
                 });
 
+
+            LocalPortCommonServiceAsync = CreatePendingInstance<CommonService>();
             Task.Factory.StartNew(() =>
                 {
-                    var remotePortCommonService = CommonTcpServices.Instance.Lookup(this.RemotePort);
-                    new Action(() => this.RemotePortCommonService = remotePortCommonService).ExecuteInSpecificThread(dispatcher);
+                    LocalPortCommonServiceAsync = CreateLoadingInstance<CommonService>();
+                    LocalPortCommonServiceAsync = CommonTcpServices.Instance.Lookup(LocalPort);
                 });
 
+
+            RemotePortCommonServiceAsync = CreatePendingInstance<CommonService>();
             Task.Factory.StartNew(() =>
                 {
-                    var process = ProcessMonitor.Instance.GetProcessInfo(ProcessId);
-                    new Action(() => this.RunningProcess = process).ExecuteInSpecificThread(dispatcher);
+                    RemotePortCommonServiceAsync = CreateLoadingInstance<CommonService>();
+                    RemotePortCommonServiceAsync = CommonTcpServices.Instance.Lookup(RemotePort);
                 });
 
+
+            RunningProcessAsync = CreatePendingInstance<RunningProcess>();
             Task.Factory.StartNew(() =>
                 {
-                    var remoteHost = DnsHostCache.Instance.Resolve(IPAddress.Parse(this.RemoteAddress));
-                    new Action(() => this.RemoteHostname = remoteHost).ExecuteInSpecificThread(dispatcher);
+                    RunningProcessAsync = CreateLoadingInstance<RunningProcess>();
+                    RunningProcessAsync = ProcessMonitor.Instance.GetProcessInfo(ProcessId);
                 });
 
+
+            RemoteHostnameAsync = PendingText;
             Task.Factory.StartNew(() =>
                 {
-                    var localHost = DnsHostCache.Instance.Resolve(IPAddress.Parse(this.LocalAddress));
-                    new Action(() => this.LocalHostname = localHost).ExecuteInSpecificThread(dispatcher);
+                    RemoteHostnameAsync = LoadingText;
+                    RemoteHostnameAsync = DnsHostCache.Instance.Resolve(IPAddress.Parse(RemoteAddress));
                 });
 
+
+            LocalHostnameAsync = PendingText;
             Task.Factory.StartNew(() =>
                 {
-                    var remoteGeo = GeoIpCache.Instance.Lookup(IPAddress.Parse(this.RemoteAddress));
-                    new Action(() => this.RemoteGeo = remoteGeo).ExecuteInSpecificThread(dispatcher);
+                    LocalHostnameAsync = LoadingText;
+                    LocalHostnameAsync = DnsHostCache.Instance.Resolve(IPAddress.Parse(LocalAddress));
+                });
+
+
+            RemoteGeoAsync = CreatePendingInstance<GeoIpEntry>();
+            Task.Factory.StartNew(() =>
+                {
+                    RemoteGeoAsync = CreateLoadingInstance<GeoIpEntry>();
+                    RemoteGeoAsync = GeoIpCache.Instance.Lookup(IPAddress.Parse(RemoteAddress));
                 });
         }
 
@@ -209,5 +323,33 @@ namespace TcpConnectionsViewer.Models
             return true;
         }
 
+        private T CreatePendingInstance<T>() where T : class, new()
+        {
+            var instance = CreateInstance<T>();
+            return SetAllPublicStringPropertyValues<T>(instance, PendingText);
+        }
+
+        private T CreateLoadingInstance<T>() where T : class, new()
+        {
+            var instance = CreateInstance<T>();
+            return SetAllPublicStringPropertyValues<T>(instance, LoadingText);
+        }
+
+        private static T CreateInstance<T>() where T : class, new()
+        {
+            return Activator.CreateInstance<T>();
+        }
+
+        private static T SetAllPublicStringPropertyValues<T>(T instance, string valueToSetAllPublicStringProperties) where T : class, new()
+        {
+            foreach (var property in instance.GetType().GetProperties())
+            {
+                if (property.PropertyType == typeof(string) && property.CanWrite && property.GetSetMethod().IsPublic)
+                {
+                    property.SetValue(instance, valueToSetAllPublicStringProperties);
+                }
+            }
+            return instance;
+        }
     }
 }

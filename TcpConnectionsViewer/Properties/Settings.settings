@@ -104,5 +104,17 @@
     <Setting Name="CrashEmailAddress" Type="System.String" Scope="Application">
       <Value Profile="(Default)">support@webmooch.net</Value>
     </Setting>
+    <Setting Name="AsyncPropertyPendingText" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">pending</Value>
+    </Setting>
+    <Setting Name="AsyncPropertyLoadingText" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">loading</Value>
+    </Setting>
+    <Setting Name="AsyncPropertyPendingTextColour" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">EEEEEE</Value>
+    </Setting>
+    <Setting Name="AsyncPropertyLoadingTextColour" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">CCCCCC</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
