@@ -177,5 +177,6 @@ namespace TcpConnectionsViewer
             };
             bgWorker.RunWorkerAsync();
         }
+
     }
 }

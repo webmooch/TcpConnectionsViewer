@@ -30,7 +30,7 @@ namespace TcpConnectionsViewer.Models
                     return _remoteMacAddressAsync;
                 }
             }
-            set
+            private set
             {
                 lock (_remoteMacAddressAsyncLock)
                 {
@@ -51,7 +51,7 @@ namespace TcpConnectionsViewer.Models
                     return _remoteMacAddressManufacturerAsync;
                 }
             }
-            set
+            private set
             {
                 lock (_remoteMacAddressManufacturerAsyncLock)
                 {
@@ -72,7 +72,7 @@ namespace TcpConnectionsViewer.Models
                     return _localPortCommonServiceAsync;
                 }
             }
-            set
+            private set
             {
                 lock (_localPortCommonServiceAsyncLock)
                 {
@@ -93,7 +93,7 @@ namespace TcpConnectionsViewer.Models
                     return _remotePortCommonServiceAsync;
                 }
             }
-            set
+            private set
             {
                 lock (_remotePortCommonServiceAsyncLock)
                 {
@@ -114,7 +114,7 @@ namespace TcpConnectionsViewer.Models
                     return _runningProcessAsync;
                 }
             }
-            set
+            private set
             {
                 lock (_runningProcessAsyncLock)
                 {
@@ -135,7 +135,7 @@ namespace TcpConnectionsViewer.Models
                     return _remoteHostnameAsync;
                 }
             }
-            set
+            private set
             {
                 lock (_remoteHostnameAsyncLock)
                 {
@@ -156,7 +156,7 @@ namespace TcpConnectionsViewer.Models
                     return _localHostnameAsync;
                 }
             }
-            set
+            private set
             {
                 lock (_localHostnameAsyncLock)
                 {
@@ -177,7 +177,7 @@ namespace TcpConnectionsViewer.Models
                     return _remoteGeoAsync;
                 }
             }
-            set
+            private set
             {
                 lock (_remoteGeoAsyncLock)
                 {
@@ -205,7 +205,6 @@ namespace TcpConnectionsViewer.Models
             this.PendingText = pendingText;
             this.LoadingText = loadingText;
 
-
             RemoteMacAddressAsync = PendingText;
             RemoteMacAddressManufacturerAsync = CreatePendingInstance<KnownMacManufacturer>();
             Task.Factory.StartNew(() =>
@@ -218,14 +217,12 @@ namespace TcpConnectionsViewer.Models
                     RemoteMacAddressManufacturerAsync = KnownMacManufacturers.Instance.Lookup(RemoteMacAddressAsync);
                 });
 
-
             LocalPortCommonServiceAsync = CreatePendingInstance<CommonService>();
             Task.Factory.StartNew(() =>
                 {
                     LocalPortCommonServiceAsync = CreateLoadingInstance<CommonService>();
                     LocalPortCommonServiceAsync = CommonTcpServices.Instance.Lookup(LocalPort);
                 });
-
 
             RemotePortCommonServiceAsync = CreatePendingInstance<CommonService>();
             Task.Factory.StartNew(() =>
@@ -234,14 +231,12 @@ namespace TcpConnectionsViewer.Models
                     RemotePortCommonServiceAsync = CommonTcpServices.Instance.Lookup(RemotePort);
                 });
 
-
             RunningProcessAsync = CreatePendingInstance<RunningProcess>();
             Task.Factory.StartNew(() =>
                 {
                     RunningProcessAsync = CreateLoadingInstance<RunningProcess>();
                     RunningProcessAsync = ProcessMonitor.Instance.GetProcessInfo(ProcessId);
                 });
-
 
             RemoteHostnameAsync = PendingText;
             Task.Factory.StartNew(() =>
@@ -250,14 +245,12 @@ namespace TcpConnectionsViewer.Models
                     RemoteHostnameAsync = DnsHostCache.Instance.Resolve(IPAddress.Parse(RemoteAddress));
                 });
 
-
             LocalHostnameAsync = PendingText;
             Task.Factory.StartNew(() =>
                 {
                     LocalHostnameAsync = LoadingText;
                     LocalHostnameAsync = DnsHostCache.Instance.Resolve(IPAddress.Parse(LocalAddress));
                 });
-
 
             RemoteGeoAsync = CreatePendingInstance<GeoIpEntry>();
             Task.Factory.StartNew(() =>
