@@ -3,14 +3,14 @@
 
 TCP Connections Viewer is a portable executable that displays detailed information about all TCP connections on the local system.
 
-Existing mainstream connection viewer programs are generally closed-source and do not provide as much output-detail as this program.
+Existing mainstream connection viewer programs are generally closed-source and do not provide as much output-detail as I required.
 
 TCP Connections Viewer is still in its infancy but more features and UI options are planned.
 
 TCP Connections Viewer utilises v4.5 of the .NET framework and is written in C# with WPF MVVM.
 
 
-##Possible Uses
+##Purpose
 
 Detecting and locating trojans, malware, etc
 
@@ -31,9 +31,9 @@ When launched all TCP connection data is automatically populated and will refres
 
 Data can be sorted in ascending and descending order by clicking on any column title.
 
-Columns can be displayed or hidden by right clicking on any column header and checking or unchecking the desired column names from the context menu.
+Columns can be displayed or hidden by right clicking on any column header and checking or unchecking the desired column name(s) from the context menu.
 
-Certain process information is only available when the program is launched in elevated (administrative) mode, as is the ability to terminate connections.
+Certain process information is only available when the program is launched in elevated (administrative) mode, including the ability to terminate connections.
 
 
 ##Column Data
@@ -69,3 +69,8 @@ Certain process information is only available when the program is launched in el
 - Time Since Process Creation
 - Process Executable Path
 - Process Command Line
+
+
+##Screenshot
+
+![Main Screenshot](http://webmooch.net/images/TcpConnectionsViewerScreenshot.png)
